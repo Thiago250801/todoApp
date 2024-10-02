@@ -42,14 +42,14 @@
   <ul class="list-group mt-4">
     <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let todo of getFilteredTodos()">
       <div class="d-flex align-items-center">
-        <input class="mx-2 w-100"
+        <input class="mx-2"
 
           type="checkbox" 
           [checked]="todo.completed" 
           (change)="toggleTodoCompletion(todo)"
           *ngIf="editingTodoId !== todo.id"
         />
-        <span [ngClass]="{'completed': todo.completed}" *ngIf="editingTodoId !== todo.id">{{ todo.title }}</span>
+        <span class="text-break" [ngClass]="{'completed': todo.completed}" *ngIf="editingTodoId !== todo.id">{{ todo.title }}</span>
         <input 
           *ngIf="editingTodoId === todo.id"
           class="form-control ms-2 shadow-none"
