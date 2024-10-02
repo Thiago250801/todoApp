@@ -1,6 +1,6 @@
 <!-- src/app/components/todo/todo.component.html -->
 <div class="todo-app container">
-  <h1 class="mb-4">Todo App</h1>
+  <h1 class="mb-4 d-flex justify-content-center">Todo App</h1>
 
   <!-- Add New Todo Form Group with Validation -->
 
@@ -57,12 +57,13 @@
           (keyup.enter)="saveEditedTodo()"
           placeholder="Editar tarefa"
         />
+        <hr>
 
       </div>
 
       <!-- Edit/Save/Delete Buttons -->
       <div class="d-flex justify-content-around me-2">
-        <button class="btn btn-sm btn-secondary" *ngIf="editingTodoId !== todo.id" (click)="editTodo(todo)"><i class="bi bi-pencil"></i></button>
+        <button class="btn btn-sm btn-secondary" *ngIf="editingTodoId !== todo.id" (click)="editTodo(todo)"><i class="bi bi-pencil" ></i></button>
         <button class="btn btn-sm btn-success" *ngIf="editingTodoId === todo.id" (click)="saveEditedTodo()">Salvar </button>
         <button class="btn btn-sm btn-danger" *ngIf="editingTodoId === todo.id" (click)="cancelEdit()">Cancelar</button>
         <button class="btn btn-sm btn-danger ml-2" (click)="deleteTodo(todo.id)"><i class="bi bi-trash"></i></button>
