@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { TodoService } from './service/todo.service';
 import { Todo } from './models/todo';
 
@@ -15,6 +15,7 @@ export class AppComponent implements OnInit {
   formSubmitted = false; // To track if form has been submitted
   editFormSubmitted = false; // To track if edit form has been submitted
 
+  showMoreButton = false;
   filter: 'all' | 'completed' | 'pending' = 'all';
   constructor(private todoService: TodoService) {}
 
@@ -73,6 +74,7 @@ export class AppComponent implements OnInit {
         title: this.editedTodoTitle,
         completed: this.todos.find(todo => todo.id === this.editingTodoId)?.completed || false
       };
+      
 
       this.todoService.updateTodo(updatedTodo);
       this.loadTodos();
