@@ -83,37 +83,21 @@
         placeholder="Editar tarefa"
       />
   
-      <div class="d-flex align-items-center w-100">
-        <input
-          class="form-check-input me-2"
-          type="checkbox"
-          [checked]="todo.completed"
-          (change)="toggleTodoCompletion(todo)"
-          *ngIf="editingTodoId !== todo.id"
-          id="firstCheckbox"
-        />
-  
-        <span
-        for="firstCheckbox"
-          class="d-inline-block text-truncate  fw-semibold"
-          placement="right"
-          style="max-width: 230px;"
-          [popover]="todo.title"
-          triggers="hover focus"
-          [ngClass]="{ completed: todo.completed }"
+        <div class="form-check">
+          <input class="form-check-input"    [checked]="todo.completed" (change)="toggleTodoCompletion(todo)" type="checkbox" value="" *ngIf="editingTodoId !== todo.id" >
+          <label class="form-check-label text-truncate" style="max-width: 230px;" triggers="hover focus" [popover]="todo.title" placement="right" [ngClass]="{ completed: todo.completed }"  
           *ngIf="editingTodoId !== todo.id && todo.title.length > 30"
-        >
-          {{ todo.title }}
-        </span>
-  
-        <span
-        class="fw-semibold"
-          [ngClass]="{ completed: todo.completed }"
-          *ngIf="editingTodoId !== todo.id && 30 >= todo.title.length"
-        >
-          {{ todo.title }}
-        </span>
-      </div>
+          >
+            {{todo.title}}
+          </label>
+          <label class="form-check-label" 
+          *ngIf="editingTodoId !== todo.id && 30 >= todo.title.length" [ngClass]="{ completed: todo.completed }"
+          >
+        {{todo.title}}</label>
+        </div>
+        
+
+      
   
       <div class="d-flex w-100 justify-content-between align-items-center mt-2">
         <small class="me-2 text-secondary">Data de conclusão: 3 days ago</small>
