@@ -4,29 +4,52 @@
 >
   Todo App
 </h1>
+
 <div class="todo-app container">
   <!-- Add New Todo Form Group with Validation -->
+  <form #form="ngForm" (ngSubmit)="addTodo(form)">
+    <!-- Campo para adicionar nova tarefa -->
+    <mat-form-field class="col-12" appearance="outline">
+      <mat-label>Adicionar nova tarefa</mat-label>
+      <input
+        matInput
+        id="newTodoTitle"
+        [(ngModel)]="newTodoTitle"
+        name="todoTitle"
+        #todoTitleInput="ngModel"
+        required
+      />
+      <mat-error *ngIf="formSubmitted && todoTitleInput.invalid">
+        O campo de nova tarefa é obrigatório.
+      </mat-error>
+    </mat-form-field>
+  
+    <!-- Campo para data de conclusão -->
+    <mat-form-field class="col-12" appearance="outline">
+      <mat-label>Data de conclusão</mat-label>
+      <input
+        matInput
+        [matDatepicker]="picker"
+        [(ngModel)]="dataConclusao"
+        name="dueDate"
+        #dateInput="ngModel"
+        required
+        readonly
+        [min]="today"
+      />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error *ngIf="formSubmitted && dateInput.invalid">
+        A data de conclusão é obrigatória.
+      </mat-error>
+    </mat-form-field>
+  
+    <!-- Botão para adicionar tarefa -->
+    <button type="submit" class="btn btn-primary mt-2 w-100" >
+      Adicionar
+    </button>
+  </form>
 
-  <div class="form-group">
-    <label for="newTodoTitle">Adicionar nova tarefa</label>
-    <input
-      type="text"
-      id="newTodoTitle"
-      class="form-control"
-      [(ngModel)]="newTodoTitle"
-      [ngClass]="{
-        'is-invalid': formSubmitted && !newTodoTitle.trim(),
-        'is-valid': formSubmitted && newTodoTitle.trim()
-      }"
-      (keyup.enter)="addTodo()"
-      required
-    />
-    <div *ngIf="formSubmitted && !newTodoTitle.trim()" class="invalid-feedback">
-      O campo não pode ser vazio.
-    </div>
-  </div>
-
-  <button class="btn btn-primary mt-2" (click)="addTodo()">Adicionar</button>
 
   <div class="mt-4">
     <div
@@ -71,17 +94,40 @@
   <!-- Todo List -->
   <div class="list-group mt-3">
     <span class="list-group-item" *ngFor="let todo of getFilteredTodos()">
-      <input
-        *ngIf="editingTodoId === todo.id"
-        class="form-control shadow-none"
-        [(ngModel)]="editedTodoTitle"
-        [ngClass]="{
-          'is-invalid': editFormSubmitted && !editedTodoTitle.trim(),
-          'is-valid': editFormSubmitted && editedTodoTitle.trim()
-        }"
-        (keyup.enter)="saveEditedTodo()"
-        placeholder="Editar tarefa"
-      />
+      <mat-form-field *ngIf="editingTodoId === todo.id" appearance="outline" class="w-100 mt-1">
+        <mat-label>Editar Tarefa</mat-label>
+        <input
+          matInput
+          [(ngModel)]="editedTodoTitle"
+          (keyup.enter)="saveEditedTodo()"
+          placeholder="Editar tarefa"
+          required
+        />
+        <mat-error *ngIf="editFormSubmitted && !editedTodoTitle.trim()">
+          O título da tarefa é obrigatório.
+        </mat-error>
+      </mat-form-field>
+    
+      <mat-form-field cla *ngIf="editingTodoId === todo.id" appearance="outline" class="w-100 mt-1">
+        <mat-label>Editar Data</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          [ngModel]="todo.data"
+          (ngModelChange)="editedDataConclusao = $event"
+          readonly 
+          required
+          [min]="today"    
+          #dateInput="ngModel"
+             />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+
+        <mat-error *ngIf="editFormSubmitted && dateInput.invalid">
+          A data de conclusão é obrigatória.
+        </mat-error>
+      </mat-form-field>
+      
   
         <div class="form-check">
           <input class="form-check-input"    [checked]="todo.completed" (change)="toggleTodoCompletion(todo)" type="checkbox" value="" *ngIf="editingTodoId !== todo.id" >
@@ -95,12 +141,17 @@
           >
         {{todo.title}}</label>
         </div>
-        
 
       
   
       <div class="d-flex w-100 justify-content-between align-items-center mt-2">
-        <small class="me-2 text-secondary">Data de conclusão: 3 days ago</small>
+        <small class="text-secondary">
+          Data de conclusão: 
+          <span [ngStyle]="{ 'color': getDateStatusColor(todo.data) }">
+            {{ todo.data | dateStatus }}
+          </span>
+        </small>
+        
         <div class="gap-2 d-flex">
           <button
             class="btn btn-sm btn-secondary"

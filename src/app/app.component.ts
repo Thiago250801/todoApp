@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { TodoService } from './service/todo.service';
 import { Todo } from './models/todo';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -14,38 +15,71 @@ export class AppComponent implements OnInit {
   editedTodoTitle = ''; // Store the edited title
   formSubmitted = false; // To track if form has been submitted
   editFormSubmitted = false; // To track if edit form has been submitted
-
+  dataConclusao : Date | null = null; 
+  editedDataConclusao : Date | null = null;
+  selectedDate: Date | null = null; 
+  today: Date = new Date();
   showMoreButton = false;
   filter: 'all' | 'completed' | 'pending' = 'all';
   constructor(private todoService: TodoService) {}
 
   ngOnInit(): void {
     this.loadTodos();
+
   }
+
+  getDateStatusColor(date: Date | null): string {
+    // Retorna cor preta se a data for nula
+    if (!date) return 'black';
+  
+    // Certifique-se de que 'date' é um objeto Date
+    const todoDate = date instanceof Date ? date : new Date(date);
+  
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+  
+    if (todoDate.toDateString() === today.toDateString()) {
+      return 'orange'; // Cor para "hoje"
+    } else if (todoDate.toDateString() === tomorrow.toDateString()) {
+      return 'green'; // Cor para "amanhã"
+    } else if (todoDate < today) {
+      return 'red'; // Cor para "expirou"
+    }
+    return 'black'; // Valor padrão
+  }
+  
+  
 
   loadTodos(): void {
     this.todos = this.todoService.getTodos();
   }
 
   // Add a new todo
-  addTodo(): void {
+  addTodo(form: NgForm): void {
     this.formSubmitted = true;
 
-    if (!this.newTodoTitle.trim()) {
-      // Prevent submission if title is empty
-      return;
+    if (form.invalid) {
+      return; // If the form is invalid, don't proceed
     }
 
     const newTodo: Todo = {
       id: Date.now(),
       title: this.newTodoTitle,
-      completed: false
+      completed: false,
+      data: this.dataConclusao, // Adicione este campo se estiver presente no modelo
     };
 
     this.todoService.addTodo(newTodo);
     this.loadTodos();
+
+    // Resetando os campos do formulário
     this.newTodoTitle = '';
+    this.dataConclusao = null;
     this.formSubmitted = false; // Reset form submission flag
+
+    // Limpa as validações
+    form.resetForm();
   }
 
   setFilter(filter: 'all' | 'completed' | 'pending'): void {
@@ -57,6 +91,7 @@ export class AppComponent implements OnInit {
     this.editingTodoId = todo.id;
     this.editedTodoTitle = todo.title;
     this.editFormSubmitted = false; // Reset edit form validation when starting a new edit
+    this.editedDataConclusao  = todo.data ?? null;
   }
 
   // Save the edited todo
@@ -72,7 +107,8 @@ export class AppComponent implements OnInit {
       const updatedTodo: Todo = {
         id: this.editingTodoId,
         title: this.editedTodoTitle,
-        completed: this.todos.find(todo => todo.id === this.editingTodoId)?.completed || false
+        completed: this.todos.find(todo => todo.id === this.editingTodoId)?.completed || false,
+        data: this.editedDataConclusao
       };
       
 
