@@ -145,11 +145,15 @@
       
   
       <div class="d-flex w-100 justify-content-between align-items-center mt-2">
-        <small class="text-secondary">
+        <small class="text-secondary" *ngIf="!todo.completed">
           Data de conclusão: 
           <span [ngStyle]="{ 'color': getDateStatusColor(todo.data) }">
             {{ todo.data | dateStatus }}
-          </span>
+          </span>  
+        </small>
+
+        <small *ngIf="todo.completed" class="text-secondary">Data de conclusão: 
+          <span class="text-success">Concluída</span>
         </small>
         
         <div class="gap-2 d-flex">
